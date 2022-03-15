@@ -1,0 +1,13 @@
+syntax = "proto3";
+package dbos;
+import "shared_values.proto";
+
+message MainConfig {
+    string version = 1;
+    ConfigType config_type = 2;
+    string mqtt_broker_address = 3;
+    string wildcard = 4;
+    string splitting_character = 5;
+    repeated string active_configs = 6;
+}
+

@@ -1,0 +1,18 @@
+syntax = "proto3";
+package dbos;
+import "helper.proto";
+import "shared_values.proto";
+
+message ProductionLine {
+    string version = 1;
+    ConfigType config_type = 2;
+    string id = 3;
+    repeated ViewElementMachine machines_reduced = 4;
+    string image = 5;
+}
+
+message ViewElementMachine {
+    string machine_id = 1;
+    universal.Position position = 2;
+    universal.Size size = 3;
+}

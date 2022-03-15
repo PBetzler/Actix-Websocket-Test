@@ -1,0 +1,21 @@
+syntax = "proto3";
+package universal;
+
+message Position {
+    int32 x_pos = 1;
+    int32 y_pos = 2;    
+}
+
+message ViewElement {
+    string id = 1;
+    string view_type = 2;
+    string title = 3;
+    Position position = 4;
+    Size size = 5;
+    repeated string values = 6;
+}
+
+message Size {
+    uint32 width = 1;
+    uint32 height = 2;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package dbos;
+import "shared_values.proto";
+import "machine_id.proto";
+import "production_line.proto";
+
+message CompleteConfig {
+    string version = 1;
+    ConfigType config_type = 2;
+    string mqtt_broker_address = 3;
+    string wildcard = 4;
+    string splitting_character = 5;
+
+    map<string, MachineIdConfig> machine_map = 6;
+    map<string, ProductionLine> production_line_map = 7;
+}

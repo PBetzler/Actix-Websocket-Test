@@ -1,0 +1,31 @@
+syntax = "proto3";
+package dbos;
+import "helper.proto";
+import "shared_values.proto";
+
+message MachineTypeConfig {
+    string version = 1;
+    ConfigType config_type = 2;
+    string image = 3;
+    repeated universal.ViewElement view_elements = 4;
+    string refers = 5;
+    string manufacturer = 6;
+    string timestamp_position = 7;
+    repeated Parameter parameter = 8;
+
+}
+
+message Parameter {
+    string name = 1;
+    MqttId parameter_key = 2;
+    Parameter_MQTT_Value parameter_value = 3;
+    repeated string parameter_topics = 4;
+}
+
+message Parameter_MQTT_Value {
+    string position = 1;
+    string unit = 2;
+    string min_value = 3;
+    string max_value = 4;
+    string default_value = 5;
+}

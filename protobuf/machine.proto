@@ -1,0 +1,26 @@
+syntax = "proto3";
+package dtos;
+import "helper.proto";
+
+
+message Machines {
+    repeated Machine machines = 1;
+}
+
+message Machine {
+    string id = 1;
+    string machine_name = 2;
+    string manufacturer = 3;
+    repeated Parameter parameters = 4;
+    string image = 5;
+    repeated universal.ViewElement view_elements = 6;    
+}
+
+message Parameter {
+    string name = 1;
+    string unit = 2;
+    string default_value = 3;
+    string min_value = 4;
+    string max_value = 5;
+}
+

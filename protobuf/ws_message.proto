@@ -1,0 +1,10 @@
+syntax = "proto3";
+package dtos;
+import "google/protobuf/timestamp.proto";
+
+message DataMessage {
+    string machine_id = 1;
+    string parameter_name = 2;
+    string parameter_value = 3;
+    google.protobuf.Timestamp parameter_timestamp = 4;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+package dbos;
+
+enum ConfigType {
+    NOT_SET = 0;
+    MAIN_CONFIG = 1;
+    MACHINE_ID_CONFIG = 2;
+    MACHINE_TYPE_CONFIG = 3;
+    PRODUCTION_LINE_CONFIG = 4;
+    COMPLETE_CONFIG = 5;
+}
+
+message MqttId {
+    string position = 1;
+    oneof mqtt_id_check {
+        bool existence_check = 2;
+        MqttValueCheck value_check = 3;
+    }
+}
+
+message MqttValueCheck {
+    bool value_check = 1;
+    oneof value_to_check {
+        bool value_equals_id_or_name = 2;
+        string value = 3;
+    }
+
+}

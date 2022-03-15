@@ -1,0 +1,18 @@
+syntax = "proto3";
+package dbos;
+import "shared_values.proto";
+import "machine_type.proto";
+
+message MachineIdConfigs {
+    repeated MachineIdConfig machine_id_configs = 1;
+}
+
+message MachineIdConfig {
+    string version = 1;
+    ConfigType config_type = 2;
+    string id = 3;
+    string machine_name = 4;
+    MqttId mqtt_id_check = 5;
+    MachineTypeConfig type_config = 6;
+}
+
