@@ -2,3 +2,8 @@
 /public/build/
 
 .DS_Store
+*.swp
+build.json
+*.actual
+built/*
+**/package-lock.json
