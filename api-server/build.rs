@@ -13,8 +13,10 @@ fn main() {
         let file = file.unwrap();
 
         if file.file_type().unwrap().is_file() {
-            if file.path().ends_with(".proto") {
-                proto_files.push(file.path())
+            //println!("{:?}", file.path());
+            if file.path().to_str().expect("Received None Type.").ends_with(".proto") {
+                proto_files.push(file.path());
+                //println!("{:?}", file.path());
             }
         } 
     }
