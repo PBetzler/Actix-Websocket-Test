@@ -1,11 +1,23 @@
 extern crate prost_build;
 
-use std::{env, path::PathBuf};
+use std::{env, path::{PathBuf, Path}, fs};
 use prost_wkt_build::*;
 
 
 // executing protobuf compilation
 fn main() {
+
+    let mut proto_files: Vec<PathBuf> = Vec::new();
+
+    for file in fs::read_dir("./../protobuf").unwrap() {
+        let file = file.unwrap();
+
+        if file.file_type().unwrap().is_file() {
+            if file.path().ends_with(".proto") {
+                proto_files.push(file.path())
+            }
+        } 
+    }
 
     let out = PathBuf::from(env::var("OUT_DIR").unwrap());
     let descriptor_file = out.join("descriptors.bin");
@@ -50,7 +62,7 @@ fn main() {
             "::prost_wkt_types::Value"
         )
         .file_descriptor_set_path(&descriptor_file)
-        .compile_protos(&["../protobuf/*"],
+        .compile_protos(proto_files.as_slice(),
         &["../protobuf/"]).unwrap();
 
     let descriptor_bytes = std::fs::read(descriptor_file).unwrap();
