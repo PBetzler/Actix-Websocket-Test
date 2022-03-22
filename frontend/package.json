@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "protoc-gen-ts": "^0.8.2",
+    "sirv": "^2.0.2",
     "sirv-cli": "^2.0.0",
     "svelte-i18n": "^3.3.13",
     "websocket-ts": "^1.1.1"

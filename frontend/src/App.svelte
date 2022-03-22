@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { WebsocketBuilder, Websocket } from "websocket-ts";
 	import { dbos } from "./dtos/main";
 	import { dbos as d } from "./dtos/shared_values";
 	import {catchHandler, finallyHandler, httpGet, responseHandler} from "./modules/api";
@@ -8,7 +7,7 @@
 	export let name: string;
 	export let configJson: dbos.MainConfig = getUninitialisedMainConfig();
 	export let wsMessages: dbos.MainConfig = getUninitialisedMainConfig();
-	export let ws: Websocket = null;
+	export let ws: WebSocket = null;
 
 
 	function getUninitialisedMainConfig(): dbos.MainConfig {
@@ -28,14 +27,13 @@
 
 	
 	function connect(url: string): void {
-		ws = new WebsocketBuilder(url)
-			.onOpen(onOpen)
-			.onClose(onClose)
-			.onError(onError)
-			.onMessage(onMessage)
-			.onRetry(onRetry)
-			.build();
+		ws = new WebSocket(url);
+		ws.onopen = onOpen;
+		ws.onmessage = onMessage;
+		ws.onerror = onError;
+		ws.onclose = onClose;
 	}
+	
 	//indicates that the connection is ready to send and receive data
 
 	function onOpen(event: any): void {
@@ -67,7 +65,7 @@
 	onMount(() => {
 		name = "Philip"
 		getConfigJson().then((config) => configJson = config);
-		connect("ws://127.0.0.1:3000/ws");
+		//connect("ws://127.0.0.1:3000/ws");
 	})
 
 	
