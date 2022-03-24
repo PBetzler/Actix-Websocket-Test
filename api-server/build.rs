@@ -1,6 +1,6 @@
 extern crate prost_build;
 
-use std::{env, path::{PathBuf, Path}, fs};
+use std::{env, path::PathBuf, fs};
 use prost_wkt_build::*;
 
 

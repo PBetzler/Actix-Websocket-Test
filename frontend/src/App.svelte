@@ -6,8 +6,8 @@
 
 	export let name: string;
 	export let configJson: dbos.MainConfig = getUninitialisedMainConfig();
-	export let wsMessages: dbos.MainConfig = getUninitialisedMainConfig();
 	export let ws: WebSocket = null;
+	export let counter = 0;
 
 
 	function getUninitialisedMainConfig(): dbos.MainConfig {
@@ -43,7 +43,7 @@
 	//An event listener to be called when a message is received from the server
 
 	function onMessage(event: any): void {
-		wsMessages = dbos.MainConfig.fromObject(JSON.parse(event.data));
+		counter++;
 	}
 	//An event listener to be called when an error occurs. This is a simple event named "error".
 
@@ -65,7 +65,7 @@
 	onMount(() => {
 		name = "Philip"
 		getConfigJson().then((config) => configJson = config);
-		//connect("ws://127.0.0.1:3000/ws");
+		connect("ws://127.0.0.1:3000/ws");
 	})
 
 	
@@ -76,7 +76,7 @@
 <main>
 	<h1>Hello {name}!</h1>
 	<p>{configJson.config_type}</p>
-	<p>{wsMessages.config_type}</p>
+	<p>{counter}</p>
 </main>
 
 <style>

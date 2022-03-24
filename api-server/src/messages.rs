@@ -1,29 +1,21 @@
 use actix::prelude::{Message, Recipient};
-use uuid::Uuid;
 
 #[derive(Message, Clone)]
 #[rtype(result = "()")]
 pub struct WsMessage(pub String);
 
-#[derive(Message)]
-#[rtype(result = "()")]
-pub struct Connect {
-    pub addr: Recipient<WsMessage>,
-    pub lobby_id: Uuid,
-    pub self_id: Uuid,
-}
+#[derive(Clone, Message)]
+#[rtype(result = "usize")]
+pub struct JoinRoom(pub String, pub Recipient<WsMessage>);
 
-#[derive(Message)]
+#[derive(Clone, Message)]
 #[rtype(result = "()")]
-pub struct Disconnect {
-    pub id: Uuid,
-    pub room_id: Uuid,
-}
+pub struct LeaveRoom(pub String, pub usize);
 
-#[derive(Message)]
+#[derive(Clone, Message)]
+#[rtype(result = "Vec<String>")]
+pub struct ListRooms;
+
+#[derive(Clone, Message)]
 #[rtype(result = "()")]
-pub struct ClientActorMessage {
-    pub id: Uuid,
-    pub msg: String,
-    pub room_id: Uuid
-}
+pub struct SendMessage(pub String, pub usize, pub String);

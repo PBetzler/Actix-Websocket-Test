@@ -4,20 +4,15 @@ use std::fs::File;
 use std::io::Write;
 use actix_web::{App, HttpServer, middleware::Logger};
 use actix_cors::Cors;
-use actix::Actor;
 use tokio::task;
 
 
-pub mod protobuf_messages;
-pub mod actions;
-pub mod data;
-pub mod web_sockets;
-pub mod messages;
-pub mod start_connection;
-pub mod lobby;
-
-use lobby::Lobby;
-use start_connection::start_connection as start_connection_route;
+mod protobuf_messages;
+mod actions;
+mod data;
+mod ws_clients;
+mod messages;
+mod ws_server;
 
 pub async fn write_to_file(buf: &[u8], file_name: &str) -> Result<(), std::io::Error> {
     let dir = env::current_dir().unwrap();
@@ -27,9 +22,10 @@ pub async fn write_to_file(buf: &[u8], file_name: &str) -> Result<(), std::io::E
 }
 
 
+/* 
 async fn authn() {
 
-}
+}*/
 
 
 
@@ -44,26 +40,27 @@ async fn main() -> std::io::Result<()> {
     data::MAIN_CONFIG.splitting_character = ".".to_string();
     data::MAIN_CONFIG.active_configs = [].to_vec();
 
-    let lobby = Lobby::default();
-    let chat_server = lobby.start();
-    let chat_server_2 = chat_server.clone();
 
     let server = HttpServer::new(move|| App::new()
         .wrap(Logger::default())
         .wrap(Cors::default().allow_any_origin().allow_any_header().allow_any_method())
         .service(actions::get_json)
         .service(actions::get_protobuf)
-        .service(start_connection_route)
-        .app_data(chat_server.clone())
+        .service(actions::start_ws_connection)
     )
     .bind(("127.0.0.1", 3000))?
     .run();
 
-    let msg = messages::WsMessage (serde_json::to_string_pretty(&data::MAIN_CONFIG).expect("Expected parsable string"));
+    let msg = serde_json::to_string_pretty(&data::MAIN_CONFIG).expect("Expected parsable string");
     
     task::spawn(async move {
         loop {
-            chat_server_2.send(msg.clone()).await.expect("Couldnt send ws message!");
+            log::debug!("Sending msg to ws_clients");
+            match ws_server::WsChatServer::default().send_chat_message("Main", &msg.clone(), 0) {
+                Some(()) => log::debug!("Got a result from sending chat message"),
+                None => log::debug!("Got no result from sending chat message"),
+            }
+            
             sleep(Duration::from_secs(1));
         }        
     });
