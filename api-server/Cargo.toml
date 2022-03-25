@@ -21,6 +21,7 @@ uuid = { version = "0.8", features = ["v4", "serde"] }
 tokio = "1.17.0"
 log = "0.4"
 rand = "0.8"
+lazy_static = "1.4"
 
 [build-dependencies]
 prost-build = "0.9"

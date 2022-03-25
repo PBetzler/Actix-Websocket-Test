@@ -23,8 +23,10 @@ pub async fn get_protobuf(_req: HttpRequest) -> impl Responder {
 pub async fn start_ws_connection(
     req: HttpRequest,
     stream: web::Payload,
-) -> Result<HttpResponse, Error> {    
-
-    let resp = ws::start(WsConn::default(), &req, stream)?;
+) -> Result<HttpResponse, Error> {
+    
+    let ws_conn = WsConn ::new("Main");
+    let resp = ws::start(ws_conn, &req, stream)?;
+    
     Ok(resp)
 }

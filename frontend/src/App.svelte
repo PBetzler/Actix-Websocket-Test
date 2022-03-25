@@ -7,7 +7,7 @@
 	export let name: string;
 	export let configJson: dbos.MainConfig = getUninitialisedMainConfig();
 	export let ws: WebSocket = null;
-	export let counter = 0;
+	export let date = new Date();
 
 
 	function getUninitialisedMainConfig(): dbos.MainConfig {
@@ -43,7 +43,7 @@
 	//An event listener to be called when a message is received from the server
 
 	function onMessage(event: any): void {
-		counter++;
+		date = new Date();
 	}
 	//An event listener to be called when an error occurs. This is a simple event named "error".
 
@@ -76,7 +76,7 @@
 <main>
 	<h1>Hello {name}!</h1>
 	<p>{configJson.config_type}</p>
-	<p>{counter}</p>
+	<p>{date}</p>
 </main>
 
 <style>

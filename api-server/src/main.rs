@@ -6,6 +6,8 @@ use actix_web::{App, HttpServer, middleware::Logger};
 use actix_cors::Cors;
 use tokio::task;
 
+#[macro_use]
+extern crate lazy_static;
 
 mod protobuf_messages;
 mod actions;
@@ -31,7 +33,7 @@ async fn authn() {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=info");
+    std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
     data::MAIN_CONFIG.version = "1.0".to_string();
@@ -40,8 +42,28 @@ async fn main() -> std::io::Result<()> {
     data::MAIN_CONFIG.splitting_character = ".".to_string();
     data::MAIN_CONFIG.active_configs = [].to_vec();
 
+    let ws_chat_server = ws_server::WsChatServer::default();
+    let mut ws_chat_server_2 = ws_chat_server.clone();
 
-    let server = HttpServer::new(move|| App::new()
+    actix::Supervisor::start(|_| ws_chat_server);
+
+    ws_server::WsChatServer::create_room("Main");
+
+    let msg = serde_json::to_string_pretty(&data::MAIN_CONFIG).expect("Expected parsable string");
+    
+    task::spawn(async move {
+        loop {
+            match ws_chat_server_2.send_chat_message("Main", &msg.clone(), 0) {
+                Some(()) => (),//log::debug!("Got a result from sending chat message"),
+                None => (),//log::debug!("Got no result from sending chat message"),
+            }
+            
+            sleep(Duration::from_secs(1));
+        }        
+    });
+
+
+    HttpServer::new(move|| App::new()
         .wrap(Logger::default())
         .wrap(Cors::default().allow_any_origin().allow_any_header().allow_any_method())
         .service(actions::get_json)
@@ -49,22 +71,8 @@ async fn main() -> std::io::Result<()> {
         .service(actions::start_ws_connection)
     )
     .bind(("127.0.0.1", 3000))?
-    .run();
+    .workers(2)
+    .run().await
 
-    let msg = serde_json::to_string_pretty(&data::MAIN_CONFIG).expect("Expected parsable string");
-    
-    task::spawn(async move {
-        loop {
-            log::debug!("Sending msg to ws_clients");
-            match ws_server::WsChatServer::default().send_chat_message("Main", &msg.clone(), 0) {
-                Some(()) => log::debug!("Got a result from sending chat message"),
-                None => log::debug!("Got no result from sending chat message"),
-            }
-            
-            sleep(Duration::from_secs(1));
-        }        
-    });
-
-    server.await  
 
 }
